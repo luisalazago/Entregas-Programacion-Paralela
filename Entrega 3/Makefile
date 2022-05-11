@@ -21,7 +21,7 @@ LDFLAGS		= $(OPTFLAGS) $(DEBUGFLAGS)
 PROGRAM 	= MatrixMultiplicationMPI_V1
 
 PROGRAMS        = MatrixMultiplicationMPI_V1
-PROCS      	= 8
+PROCS      	= 16
 THREADS		= 8
 
 #

@@ -16,11 +16,11 @@ OMPFLAGS	= -fopenmp
 OPTFLAGS	=
 DEBUGFLAGS	=
 CFLAGS		= -Wall $(OMPFLAGS) $(OPTFLAGS) $(DEBUGFLAGS)
-LDFLAGS		= $(OPTFLAGS) $(DEBUGFLAGS)
+LDFLAGS		= $(OPTFLAGS) $(DEBUGFLAGS) -lm
 
-PROGRAM 	= Parallel_OpenMP_MPI
+PROGRAM 	= Parallel_OpenMP_MPI_V2
 
-PROGRAMS        = Parallel_OpenMP_MPI Parallel_OpenMp Parallel_OpenMPI_V2 Parallel_OpenMPI Parallel_OpenMp_V2
+PROGRAMS        = Parallel_OpenMp_V2 Parallel_OpenMPI_V2 Parallel_OpenMP_MPI Parallel_OpenMp Parallel_OpenMPI
 PROCS      	= 16
 THREADS		= 8
 
@@ -31,7 +31,7 @@ THREADS		= 8
 all: $(PROGRAMS)
 
 $(PROGRAM): $(PROGRAM).c
-	$(CC) $(CFLAGS) $(PROGRAM).c -o $(PROGRAM) -lm
+	$(CC) $(CFLAGS) $(PROGRAM).c -o $(PROGRAM)
 
 #
 # Other nice thingys
