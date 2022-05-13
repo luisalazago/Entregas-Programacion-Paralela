@@ -1,0 +1,17 @@
+/*******************************************************************************
+*
+*  timer.h - Portable routines for tracking code performance (header file)
+*
+*   Robert Robey and Yuliana Zamora
+*   Parallel and High Performance Computing
+*   Manning, 2021
+*
+*******************************************************************************/
+
+#ifndef _TIMER_H
+#define _TIMER_H
+#include <time.h>
+
+void cpu_timer_start ( struct timespec *tstart_cpu );
+double cpu_timer_stop ( struct timespec tstart_cpu );
+#endif
