@@ -18,10 +18,10 @@ DEBUGFLAGS	=
 CFLAGS		= -Wall $(OMPFLAGS) $(OPTFLAGS) $(DEBUGFLAGS)
 LDFLAGS		= $(OPTFLAGS) $(DEBUGFLAGS)
 
-PROGRAM 	= MatrixMultiplicationMPI_V1
+PROGRAM 	= MatrixMultiplicationMPI_V2
 
-PROGRAMS        = MatrixMultiplicationMPI_V1
-PROCS      	= 16
+PROGRAMS        = MatrixMultiplicationMPI_V2
+PROCS      	= 10
 THREADS		= 8
 
 #
