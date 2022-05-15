@@ -16,7 +16,7 @@ DEBUGFLAGS	=
 CFLAGS		= $(OPTFLAGS) $(DEBUGFLAGS)
 LDFLAGS		= $(OPTFLAGS) $(DEBUGFLAGS)
 
-PROGRAMS 	= CUDA_MatrixMultiplication_V1
+PROGRAMS 	= CUDA_MatrixMultiplication_V1.cu
 
 #
 # Targets, in order of appearance

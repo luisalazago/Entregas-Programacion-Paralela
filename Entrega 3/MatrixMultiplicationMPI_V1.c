@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
 
     if (my_rank == ROOT) {
         printf("Corriendo entrega\n");
-	//matriz1 = (int*) malloc((FIL1*COL) * sizeof(int));
+        //matriz1 = (int*) malloc((FIL1*COL) * sizeof(int));
         //matrizT = (int*) malloc((FIL1*FIL2) * sizeof(int));
 
         llenar(matriz1, FIL1, COL);
