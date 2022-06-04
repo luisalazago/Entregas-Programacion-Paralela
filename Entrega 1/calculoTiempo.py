@@ -38,11 +38,16 @@ def calculoH(n,p,c):
                 tbt += (lambdas+(8*(n/(2**(j+1))) + 4)/beta) 
     return (tbf, tbt)
 
+def speedUp(ts, tp):
+    return ts/tp
+
 def main():
     n, p, c = list(map(int, input().split()))
     while p:
         tbf, tbt = calculo(n, p)
-        print("{} {} {}".format(calculoS(n), tbf, tbt))
+        ts = calculoS(n)
+        print("tiempos: {} {} {}".format(ts, tbf, tbt))
+        print("speedUp: {} {}".format(speedUp(ts,tbf), speedUp(ts,tbt)))
         n, p, c = list(map(int, input().split()))
 
 main()
