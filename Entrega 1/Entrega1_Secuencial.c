@@ -1,25 +1,31 @@
 #include <stdio.h>
 
+#define lli long long int
 #define TAM 1000000
 
-int main()
-{
-    int vector1[TAM], vector2[TAM];
+void llenar(int *vector1, int *vector2) {
     int i;
-    long long int suma;
-
-    for (i = 0; i < TAM; ++i)
-    {
+    for (i = 0; i < TAM; ++i) {
         vector1[i] = i + 1;
         vector2[i] = i + 2;
     }
+}
 
-    suma = 0;
-    for (i = 0; i < TAM; ++i)
-    {
-        suma = suma + (vector1[i] * vector2[i]);
+lli calcular(int *vector1, int *vector2, int n) {
+    lli suma = 0;
+    int i;
+    for (i = 0; i < n; ++i) {
+        suma += (vector1[i] * vector2[i]);
     }
+    return suma;
+}
 
+int main() {
+    int vector1[TAM], vector2[TAM];
+    int i;
+    lli suma;
+    llenar(vector1, vector2);
+    calcular(vector1, vector2, TAM);
     printf("El resultado es: %lld\n", suma);
     return 0;
 }
