@@ -29,13 +29,12 @@ void llenar(info *vectorT) {
 
 int main(int argc, char *argv[]) {
     // The variables are created.
-    int MSGSIZE, tam, pos, cant;
-    int my_rank, p, i, buf, suma, j, k;
+    int MSGSIZE, tam, cant;
+    int my_rank, p, i, buf, suma, j;
     MPI_Status status;
     info vectorT[TAM]; // vectorT is a vector that is use to pass the values through the functions.
 
     MPI_Init(&argc, &argv);
-    printf("Corriendo entrega con Estructura\n");
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
     MPI_Comm_size(MPI_COMM_WORLD, &p);
     buf = suma = 0;
@@ -56,26 +55,29 @@ int main(int argc, char *argv[]) {
     MPI_Type_commit(&mpi_info_type);
 
     if (my_rank == 0) {
+        printf("Corriendo entrega con Estructura\n");
         llenar(vectorT);
         /*
             As the processes have a different size of the vectors, we iterate over a value probably bigger than the
             size of the vectors, if the value is bigger we use values (0) that not modifies the final sum.
         */
-        cant = TAM; 
+        cant = TAM;
         for (i = 0; i < tam; ++i) {
             cant /= 2;
             // Broadcast to send the values to all processes.
-            MPI_Send((vectorT+cant), cant, mpi_info_type, my_rank+pow(2, i), MSGTAG, MPI_COMM_WORLD);
+            if(my_rank+pow(2, i) < p)
+              MPI_Send((vectorT+cant), cant, mpi_info_type, my_rank+pow(2, i), MSGTAG, MPI_COMM_WORLD);
         }
     }
     // Every process different to 0 recive the vector and then find the product of the two values gotten.
     else{
-        j = (int)floor(log2(p)); 
-        cant = tam/(j + 1);
+        j = (int)floor(log2(my_rank));
+        cant = TAM/(pow(2,j+1));
         MPI_Recv(&vectorT, cant, mpi_info_type,  my_rank-pow(2, j), MSGTAG, MPI_COMM_WORLD, &status);
         for(i=j+1; i < tam; ++i){
             cant /= 2;
-            MPI_Send((vectorT+cant), cant, mpi_info_type, my_rank+pow(2, i), MSGTAG, MPI_COMM_WORLD);
+            if(my_rank+pow(2,i) < p)
+              MPI_Send((vectorT+cant), cant, mpi_info_type, my_rank+pow(2, i), MSGTAG, MPI_COMM_WORLD);
         }
     }
     //all process do their jobs
@@ -83,21 +85,22 @@ int main(int argc, char *argv[]) {
     for(i = 0; i < MSGSIZE; ++i) {
         buf += (vectorT[i].x * vectorT[i].y);
     }
+    printf("%d %d\n", my_rank, buf);
     if(my_rank == 0) {
         // Broadcast to recive all the products from all processes and then add each value to suma.
-        for (i = 0; i < tam); ++i) {
-            MPI_Recv(&suma, 1, MPI_INT, my_rank+pow(2, i), MSGTAG, MPI_COMM_WORLD);
+        for (i = 0; i < tam; ++i) {
+            MPI_Recv(&suma, 1, MPI_INT, MPI_ANY_SOURCE, MSGTAG, MPI_COMM_WORLD, &status);
             buf += suma;
         }
         printf("The final value is: %d\n", buf);
     }
     else {
-        j = (int)floor(log2(p)); 
+        j = (int)floor(log2(my_rank));
         for(i=j+1; i < tam; ++i){
-            MPI_Recv(&suma, 1, MPI_INT, my_rank+pow(2, i), MSGTAG, MPI_COMM_WORLD);
+            MPI_Recv(&suma, 1, MPI_INT, MPI_ANY_SOURCE, MSGTAG, MPI_COMM_WORLD, &status);
             buf += suma;
         }
-        MPI_Send(buf, 1, MPI_INT, my_rank-pow(2, j), MSGTAG, MPI_COMM_WORLD);
+        MPI_Send(&buf, 1, MPI_INT, my_rank-pow(2, j), MSGTAG, MPI_COMM_WORLD);
     }
 
     MPI_Type_free(&mpi_info_type);
