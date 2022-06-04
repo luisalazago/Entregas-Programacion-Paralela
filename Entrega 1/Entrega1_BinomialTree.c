@@ -11,6 +11,7 @@
 #include <stdlib.h>
 
 #define MSGTAG 0
+#define TAM 16
 
 // We use a struct because we need to pass two values per position into the vector.
 typedef struct {
@@ -18,12 +19,19 @@ typedef struct {
     int y;
 } info;
 
+void llenar(info *vectorT) {
+    int i;
+    for (i = 0; i < TAM; ++i) {
+        vectorT[i].x = i + 1; // The first with values as i + 1.
+        vectorT[i].y = i + 2; // The second with values as i + 2.
+    }
+}
+
 int main(int argc, char *argv[]) {
     // The variables are created.
-    int MSGSIZE, TAM = 10;
+    int MSGSIZE, tam, pos, cant;
     int my_rank, p, i, buf, suma, j, k;
     MPI_Status status;
-    int vector1[TAM], vector2[TAM];
     info vectorT[TAM]; // vectorT is a vector that is use to pass the values through the functions.
 
     MPI_Init(&argc, &argv);
@@ -31,7 +39,8 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
     MPI_Comm_size(MPI_COMM_WORLD, &p);
     buf = suma = 0;
-    MSGSIZE = ceil(log2(p)); // Values per process;
+    tam = ceil(log2(p)); // Values per process;
+    MSGSIZE = (int)ceil(((double)TAM / (double)(p))); // Values per process;
 
     // Initialize mpi_info datatype for sharing memory
     const int    nitems = 2;
@@ -47,46 +56,48 @@ int main(int argc, char *argv[]) {
     MPI_Type_commit(&mpi_info_type);
 
     if (my_rank == 0) {
-        // The vector is initialize
-        for (i = 0; i < TAM; ++i) {
-            vector1[i] = i + 1; // The first with values as i + 1.
-            vector2[i] = i + 2; // The second with values as i + 2.
-        }
-
+        llenar(vectorT);
         /*
             As the processes have a different size of the vectors, we iterate over a value probably bigger than the
-            size of the vectors, if the value is bigger we use values (0) that not modifies the vectors.
+            size of the vectors, if the value is bigger we use values (0) that not modifies the final sum.
         */
-        for (i = 0; i < MSGSIZE; ++i) {
-            for(k = TAM / 2; k < TAM; ++k){
-                vectorT[k].x = vector1[k];
-				vectorT[k].y = vector2[k];
-            }
-
-            // Binomial way to send the information to the next 2^i node.
-            TAM = TAM / 2;
-            MPI_Send(vectorT, TAM, mpi_info_type, pow(2, i), MSGTAG, MPI_COMM_WORLD);
+        cant = TAM; 
+        for (i = 0; i < tam; ++i) {
+            cant /= 2;
+            // Broadcast to send the values to all processes.
+            MPI_Send((vectorT+cant), cant, mpi_info_type, my_rank+pow(2, i), MSGTAG, MPI_COMM_WORLD);
         }
-
+    }
+    // Every process different to 0 recive the vector and then find the product of the two values gotten.
+    else{
+        j = (int)floor(log2(p)); 
+        cant = tam/(j + 1);
+        MPI_Recv(&vectorT, cant, mpi_info_type,  my_rank-pow(2, j), MSGTAG, MPI_COMM_WORLD, &status);
+        for(i=j+1; i < tam; ++i){
+            cant /= 2;
+            MPI_Send((vectorT+cant), cant, mpi_info_type, my_rank+pow(2, i), MSGTAG, MPI_COMM_WORLD);
+        }
+    }
+    //all process do their jobs
+    buf = 0;
+    for(i = 0; i < MSGSIZE; ++i) {
+        buf += (vectorT[i].x * vectorT[i].y);
+    }
+    if(my_rank == 0) {
         // Broadcast to recive all the products from all processes and then add each value to suma.
-        suma = (vectorT[0].x * vectorT[0].y);
-        for (i = 0; i < MSGSIZE; ++i) {
-            MPI_Recv(&buf, 1, MPI_INT, MPI_ANY_SOURCE, MSGTAG, MPI_COMM_WORLD, &status);
-            suma = suma + buf;
+        for (i = 0; i < tam); ++i) {
+            MPI_Recv(&suma, 1, MPI_INT, my_rank+pow(2, i), MSGTAG, MPI_COMM_WORLD);
+            buf += suma;
         }
-        printf("The final value is: %d\n", suma);
+        printf("The final value is: %d\n", buf);
     }
     else {
-    	if(TAM > 1) {
-    		// Every process different to 0 recive the vector and then find the product of the two values gotten.
-	        MPI_Recv(&vectorT, TAM, mpi_info_type, MPI_ANY_SOURCE, MSGTAG, MPI_COMM_WORLD, &status);
-	        TAM = TAM / 2;
-	        MPI_Send(vectorT, TAM, mpi_info_type, , MSGTAG, MPI_COMM_WORLD); // Send the value to the root process.
-    	}
-    	/*
-    		We have to finish this part and build the MPI_Recv and MPI_Send to calculate and send the information
-    		when we are on the last level and process.
-    	*/
+        j = (int)floor(log2(p)); 
+        for(i=j+1; i < tam; ++i){
+            MPI_Recv(&suma, 1, MPI_INT, my_rank+pow(2, i), MSGTAG, MPI_COMM_WORLD);
+            buf += suma;
+        }
+        MPI_Send(buf, 1, MPI_INT, my_rank-pow(2, j), MSGTAG, MPI_COMM_WORLD);
     }
 
     MPI_Type_free(&mpi_info_type);

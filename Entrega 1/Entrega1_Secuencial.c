@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #define lli long long int
-#define TAM 10
+#define TAM 16
 
 void llenar(int *vector1, int *vector2) {
     int i;

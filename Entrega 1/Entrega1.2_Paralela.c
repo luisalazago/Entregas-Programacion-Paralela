@@ -11,7 +11,7 @@
 #include <stdlib.h>
 
 #define MSGTAG 0
-#define TAM 10
+#define TAM 16
 
 void llenar(int *vector1, int *vector2) {
     int i;
