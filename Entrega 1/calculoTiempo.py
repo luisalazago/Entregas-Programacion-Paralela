@@ -46,8 +46,8 @@ def main():
     while p:
         tbf, tbt = calculo(n, p)
         ts = calculoS(n)
-        print("tiempos: {} {} {}".format(ts, tbf, tbt))
-        print("speedUp: {} {}".format(speedUp(ts,tbf), speedUp(ts,tbt)))
+        print("tiempos: Secuencial(ts):{} paralelo BruteForce(tbf):{} paralelo Binary(tbt):{}".format(ts, tbf, tbt))
+        print("speedUp: BF:{} BT:{}".format(speedUp(ts,tbf), speedUp(ts,tbt)))
         n, p, c = list(map(int, input().split()))
 
 main()
