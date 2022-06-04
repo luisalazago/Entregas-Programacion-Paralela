@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #define lli long long int
-#define TAM 1000000
+#define TAM 10
 
 void llenar(int *vector1, int *vector2) {
     int i;
@@ -25,7 +25,7 @@ int main() {
     int i;
     lli suma;
     llenar(vector1, vector2);
-    calcular(vector1, vector2, TAM);
+    suma = calcular(vector1, vector2, TAM);
     printf("El resultado es: %lld\n", suma);
     return 0;
 }

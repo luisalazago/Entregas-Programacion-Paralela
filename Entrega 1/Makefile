@@ -17,9 +17,9 @@ DEBUGFLAGS	=
 CFLAGS		= -Wall $(OPTFLAGS) $(DEBUGFLAGS)
 LDFLAGS		= $(OPTFLAGS) $(DEBUGFLAGS)
 
-PROGRAM 	= Entrega1_paralela_struct
+PROGRAM 	= Entrega1.2_Paralela
 
-PROGRAMS	= Entrega1_paralela_struct
+PROGRAMS	= Entrega1.2_Paralela
 
 PROCS		= 15
 
