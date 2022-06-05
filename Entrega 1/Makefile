@@ -17,11 +17,11 @@ DEBUGFLAGS	=
 CFLAGS		= -Wall $(OPTFLAGS) $(DEBUGFLAGS)
 LDFLAGS		= $(OPTFLAGS) $(DEBUGFLAGS)
 
-PROGRAM 	= Entrega1.2_Paralela
+PROGRAM 	= Entrega1_BinomialTree
 
-PROGRAMS	= Entrega1.2_Paralela
+PROGRAMS	= Entrega12_Paralela Entrega1_BinomialTree
 
-PROCS		= 15
+PROCS		= 2
 
 #
 # Targets, in order of appearance

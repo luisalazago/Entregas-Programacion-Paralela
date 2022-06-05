@@ -44,11 +44,11 @@ def speedUp(ts, tp):
 def main():
     n, p, c = list(map(int, input().split()))
     while p:
-        tbf, tbt = calculoH(n, p, c)
+        tbf, tbt = calculo(n, p)
         ts = calculoS(n)
-        print("Tiempo Secuencial: {}/Tiempo BrutalForce: {}/Tiempo BinaryTree: {}".format(ts, tbf, tbt))
+        print("Tiempo Secuencial: {}/Tiempo BinaryTree: {}".format(ts, tbt))
         #print("tiempos: Secuencial(ts):{} paralelo BruteForce(tbf):{} paralelo Binary(tbt):{}".format(ts, tbf, tbt))
-        print("speedUp: BF:{}/ BT: {}".format(speedUp(ts,tbf), speedUp(ts,tbt)))
+        print("speedUp: BT:{}".format(speedUp(ts,tbt)))
         n, p, c = list(map(int, input().split()))
 
 main()
